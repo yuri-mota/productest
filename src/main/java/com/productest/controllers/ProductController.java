@@ -29,8 +29,8 @@ public class ProductController {
     }
 
     @GetMapping(path = "{id}")
-    public void findProductById(@PathVariable String id) {
-        //TODO
+    public ResponseEntity<Object> findProductById(@PathVariable String id) {
+        return service.findProductById(id);
     }
 
     @GetMapping

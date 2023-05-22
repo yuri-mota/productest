@@ -27,6 +27,7 @@ public class ProductServiceImplTests {
     @Test
     public void shouldNotReturnOk_InvalidParams() {
         assertFalse(subject.isRequestProductDtoValid(invalidRequestProductDto()));
+        assertFalse(subject.isRequestProductDtoValid(invalidNegativePriceRequestProductDto()));
         assertFalse(subject.isRequestProductDtoValid(invalidNameRequestProductDto()));
         assertFalse(subject.isRequestProductDtoValid(invalidDescriptionRequestProductDto()));
         assertFalse(subject.isRequestProductDtoValid(invalidPriceRequestProductDto()));
@@ -45,6 +46,14 @@ public class ProductServiceImplTests {
         dto.setName("Foo");
         dto.setDescription("Bar");
         dto.setPrice(1000.00);
+        return dto;
+    }
+
+    private RequestProductDTO invalidNegativePriceRequestProductDto() {
+        var dto = new RequestProductDTO();
+        dto.setName("Foo");
+        dto.setDescription("Bar");
+        dto.setPrice(-1000.00);
         return dto;
     }
 

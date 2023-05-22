@@ -17,7 +17,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
-    private final String PARAMETROS_DE_ENTRADA_INVALIDOS = "Os valores informados estão incompletos e/ou são inválidos";
+    private final String INVALID_PARAM = "Os valores informados estão incompletos e/ou são inválidos";
 
     public ProductServiceImpl(ProductRepository repository) {
         this.repository = repository;
@@ -26,17 +26,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<Object> createProduct(RequestProductDTO request) {
         if(isRequestProductDtoValid(request)) {
-            return new ResponseEntity<>(PARAMETROS_DE_ENTRADA_INVALIDOS, HttpStatus.BAD_REQUEST);
+            return responseBadRequest();
         } else {
-            var responseBody = repository.save(request.toProduct());
-            return new ResponseEntity<>(responseBody, HttpStatus.OK);
+            var response = repository.save(request.toProduct());
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
 
     @Override
     public ResponseEntity<Object> updateProduct(String id, RequestProductDTO request) {
         if(!isRequestProductDtoValid(request))
-            return new ResponseEntity<>(PARAMETROS_DE_ENTRADA_INVALIDOS, HttpStatus.BAD_REQUEST);
+            return responseBadRequest();
 
         var updateObject = request.toProduct();
         try {
@@ -45,14 +45,17 @@ public class ProductServiceImpl implements ProductService {
                 var response = repository.save(updateObject);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-        } catch (Exception exception){}
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception exception) {
+        }
+        return responseNotFound();
     }
 
     @Override
     public ResponseEntity<Object> findProductById(String id) {
-        //TODO
-        return null;
+        var response = repository.findById(id);
+        if(response.isPresent())
+            return new ResponseEntity<>(response.get(), HttpStatus.OK);
+        return responseNotFound();
     }
 
     @Override
@@ -74,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
             repository.delete(product.get());
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return responseNotFound();
     }
 
     public boolean isRequestProductDtoValid(RequestProductDTO request) {
@@ -82,6 +85,15 @@ public class ProductServiceImpl implements ProductService {
                         request.getName(),
                         request.getDescription(),
                         request.getPrice())
-                .anyMatch(Objects::isNull);
+                .anyMatch(Objects::isNull)
+                && request.getPrice() >= 0.0000;
+    }
+
+    public ResponseEntity<Object> responseNotFound() {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<Object> responseBadRequest() {
+        return new ResponseEntity<>(INVALID_PARAM, HttpStatus.BAD_REQUEST);
     }
 }
