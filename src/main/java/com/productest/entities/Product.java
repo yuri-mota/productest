@@ -17,12 +17,15 @@ public class Product {
     private String id;
 
     @Column
+    @NonNull
     private String name;
 
     @Column
+    @NonNull
     private String description;
 
     @Column
+    @NonNull
     private Double price;
 
 }
