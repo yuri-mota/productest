@@ -69,8 +69,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<Object> deleteProduct(String id) {
-        //TODO
-        return null;
+        var product = repository.findById(id);
+        if(product.isPresent()) {
+            repository.delete(product.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     public boolean isRequestProductDtoValid(RequestProductDTO request) {
