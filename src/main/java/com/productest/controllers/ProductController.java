@@ -1,10 +1,12 @@
 package com.productest.controllers;
 
-import com.productest.entities.DTO.CreateProductReturnDTO;
 import com.productest.entities.DTO.RequestProductDTO;
+import com.productest.entities.Product;
 import com.productest.services.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "products/", produces = "application/json")
@@ -17,7 +19,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateProductReturnDTO> createProduct(@RequestBody RequestProductDTO requestProductDTO) {
+    public ResponseEntity<Object> createProduct(@RequestBody RequestProductDTO requestProductDTO) {
         return productService.createProduct(requestProductDTO);
     }
 
@@ -32,8 +34,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public void findAllProducts() {
-        //TODO
+    public ResponseEntity<List<Product>> findAllProducts() {
+        return productService.findAllProducts();
     }
 
     @GetMapping(path = "search")
