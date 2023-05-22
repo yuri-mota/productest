@@ -17,8 +17,6 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
-    private final String INVALID_PARAM = "Os valores informados estão incompletos e/ou são inválidos";
-
     public ProductServiceImpl(ProductRepository repository) {
         this.repository = repository;
     }
@@ -45,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
                 var response = repository.save(updateObject);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-        } catch (Exception exception) {
+        } catch (Exception ignored) {
         }
         return responseNotFound();
     }
@@ -53,9 +51,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<Object> findProductById(String id) {
         var response = repository.findById(id);
-        if(response.isPresent())
-            return new ResponseEntity<>(response.get(), HttpStatus.OK);
-        return responseNotFound();
+        return response.<ResponseEntity<Object>>map(product ->
+                new ResponseEntity<>(product, HttpStatus.OK))
+                .orElseGet(this::responseNotFound);
     }
 
     @Override
@@ -81,11 +79,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public boolean isRequestProductDtoValid(RequestProductDTO request) {
-        return !Stream.of(
+        return Stream.of(
                         request.getName(),
                         request.getDescription(),
                         request.getPrice())
-                .anyMatch(Objects::isNull)
+                .noneMatch(Objects::isNull)
                 && request.getPrice() >= 0.0000;
     }
 
@@ -94,6 +92,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public ResponseEntity<Object> responseBadRequest() {
+        String INVALID_PARAM = "Os valores informados estão incompletos e/ou são inválidos";
         return new ResponseEntity<>(INVALID_PARAM, HttpStatus.BAD_REQUEST);
     }
 }
