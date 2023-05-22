@@ -1,15 +1,24 @@
 package com.productest.controllers;
 
-import org.springframework.stereotype.Controller;
+import com.productest.entities.DTO.CreateProductReturnDTO;
+import com.productest.entities.DTO.RequestProductDTO;
+import com.productest.services.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("products/")
+@RequestMapping(value = "products/", produces = "application/json")
 public class ProductController {
 
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
     @PostMapping
-    public void createProduct(@RequestBody Object object) {
-        //TODO
+    public ResponseEntity<CreateProductReturnDTO> createProduct(@RequestBody RequestProductDTO requestProductDTO) {
+        return productService.createProduct(requestProductDTO);
     }
 
     @PutMapping(path = "{id}")

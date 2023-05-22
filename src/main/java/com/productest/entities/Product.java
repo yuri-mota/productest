@@ -1,10 +1,10 @@
 package com.productest.entities;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -15,13 +15,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
-    @Column @NonNull
+    @Column
     private String name;
 
-    @Column @NonNull
+    @Column
     private String description;
 
-    @Column @NonNull
+    @Column
     private Double price;
 
 }
