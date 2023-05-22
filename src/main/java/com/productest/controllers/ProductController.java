@@ -12,20 +12,20 @@ import java.util.List;
 @RequestMapping(value = "products/", produces = "application/json")
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductService service;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    public ProductController(ProductService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<Object> createProduct(@RequestBody RequestProductDTO requestProductDTO) {
-        return productService.createProduct(requestProductDTO);
+    public ResponseEntity<Object> createProduct(@RequestBody RequestProductDTO request) {
+        return service.createProduct(request);
     }
 
     @PutMapping(path = "{id}")
-    public void updateProduct(@PathVariable String id, @RequestBody Object object) {
-        //TODO
+    public ResponseEntity<Object> updateProduct(@PathVariable String id, @RequestBody RequestProductDTO request) {
+        return service.updateProduct(id, request);
     }
 
     @GetMapping(path = "{id}")
@@ -35,11 +35,11 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> findAllProducts() {
-        return productService.findAllProducts();
+        return service.findAllProducts();
     }
 
     @GetMapping(path = "search")
-    public void findMatchingPrducts(@RequestBody Object object) {
+    public void findMatchingProducts(@RequestBody Object object) {
         //TODO
     }
 

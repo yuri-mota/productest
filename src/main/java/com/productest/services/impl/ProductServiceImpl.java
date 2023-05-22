@@ -15,35 +15,51 @@ import java.util.stream.Stream;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
+    private final ProductRepository repository;
 
     private final String PARAMETROS_DE_ENTRADA_INVALIDOS = "Os valores informados estão incompletos e/ou são inválidos";
 
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductServiceImpl(ProductRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public ResponseEntity<Object> createProduct(RequestProductDTO requestProductDTO) {
-        if(isRequestProductDtoValid(requestProductDTO)) {
+    public ResponseEntity<Object> createProduct(RequestProductDTO request) {
+        if(isRequestProductDtoValid(request)) {
             return new ResponseEntity<>(PARAMETROS_DE_ENTRADA_INVALIDOS, HttpStatus.BAD_REQUEST);
         } else {
-            var responseBody = productRepository.save(requestProductDTO.toProduct());
+            var responseBody = repository.save(request.toProduct());
             return new ResponseEntity<>(responseBody, HttpStatus.OK);
         }
     }
 
     @Override
+    public ResponseEntity<Object> updateProduct(String id, RequestProductDTO request) {
+        if(!isRequestProductDtoValid(request))
+            return new ResponseEntity<>(PARAMETROS_DE_ENTRADA_INVALIDOS, HttpStatus.BAD_REQUEST);
+
+        var updateObject = request.toProduct();
+        try {
+            if (repository.existsById(id)) {
+                updateObject.setId(id);
+                var response = repository.save(updateObject);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        } catch (Exception exception){}
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @Override
     public ResponseEntity<List<Product>> findAllProducts() {
-        var productList = productRepository.findAll();
+        var productList = repository.findAll();
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 
-    public boolean isRequestProductDtoValid(RequestProductDTO requestProductDTO) {
+    public boolean isRequestProductDtoValid(RequestProductDTO request) {
         return !Stream.of(
-                        requestProductDTO.getName(),
-                        requestProductDTO.getDescription(),
-                        requestProductDTO.getPrice())
+                        request.getName(),
+                        request.getDescription(),
+                        request.getPrice())
                 .anyMatch(Objects::isNull);
     }
 }

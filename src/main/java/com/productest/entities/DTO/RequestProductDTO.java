@@ -11,13 +11,8 @@ public class RequestProductDTO {
     public Product toProduct() throws IllegalArgumentException {
         return new Product(null, this.name, this.description, this.price);
     }
-
-    @NonNull
     String name;
-
-    @NonNull
     String description;
-
-    @NonNull
     Double price;
+
 }

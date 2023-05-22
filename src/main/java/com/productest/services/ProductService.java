@@ -9,10 +9,12 @@ import java.util.List;
 public interface ProductService {
 
     //public ResponseEntity<CreateProductReturnDTO> createProduct(RequestProductDTO requestProductDTO);
-    public ResponseEntity<Object> createProduct(RequestProductDTO requestProductDTO);
+    ResponseEntity<Object> createProduct(RequestProductDTO request);
 
-    public ResponseEntity<List<Product>> findAllProducts();
+    ResponseEntity<Object> updateProduct(String id, RequestProductDTO request);
 
-    boolean isRequestProductDtoValid(RequestProductDTO requestProductDTO);
+    ResponseEntity<List<Product>> findAllProducts();
+
+    boolean isRequestProductDtoValid(RequestProductDTO request);
 
 }
