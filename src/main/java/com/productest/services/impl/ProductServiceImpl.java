@@ -50,9 +50,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ResponseEntity<Object> findProductById(String id) {
+        //TODO
+        return null;
+    }
+
+    @Override
     public ResponseEntity<List<Product>> findAllProducts() {
         var productList = repository.findAll();
         return new ResponseEntity<>(productList, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<Product>> findFilteredProducts() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteProduct(String id) {
+        //TODO
+        return null;
     }
 
     public boolean isRequestProductDtoValid(RequestProductDTO request) {

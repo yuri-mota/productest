@@ -13,7 +13,13 @@ public interface ProductService {
 
     ResponseEntity<Object> updateProduct(String id, RequestProductDTO request);
 
+    ResponseEntity<Object> findProductById(String id);
+
     ResponseEntity<List<Product>> findAllProducts();
+
+    ResponseEntity<List<Product>> findFilteredProducts();
+
+    ResponseEntity<Object> deleteProduct(String id);
 
     boolean isRequestProductDtoValid(RequestProductDTO request);
 
