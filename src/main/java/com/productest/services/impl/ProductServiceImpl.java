@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<List<Product>> findFilteredProducts() {
-        //TODO
+        //TODO fazer funcao de desicao para nao sobrecarregar o metodo
         return null;
     }
 
