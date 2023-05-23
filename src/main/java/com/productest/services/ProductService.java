@@ -1,5 +1,6 @@
 package com.productest.services;
 
+import com.productest.entities.DTO.RequestFilterDTO;
 import com.productest.entities.DTO.RequestProductDTO;
 import com.productest.entities.Product;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,6 @@ import java.util.List;
 
 public interface ProductService {
 
-    //public ResponseEntity<CreateProductReturnDTO> createProduct(RequestProductDTO requestProductDTO);
     ResponseEntity<Object> createProduct(RequestProductDTO request);
 
     ResponseEntity<Object> updateProduct(String id, RequestProductDTO request);
@@ -17,10 +17,8 @@ public interface ProductService {
 
     ResponseEntity<List<Product>> findAllProducts();
 
-    ResponseEntity<List<Product>> findFilteredProducts();
+    ResponseEntity<List<Product>> findFilteredProducts(RequestFilterDTO request);
 
     ResponseEntity<Object> deleteProduct(String id);
-
-    boolean isRequestProductDtoValid(RequestProductDTO request);
 
 }

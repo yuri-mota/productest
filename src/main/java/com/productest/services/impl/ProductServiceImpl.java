@@ -1,16 +1,22 @@
 package com.productest.services.impl;
 
+import com.productest.entities.DTO.RequestFilterDTO;
 import com.productest.entities.DTO.RequestProductDTO;
 import com.productest.entities.Product;
 import com.productest.repositories.ProductRepository;
 import com.productest.services.ProductService;
+import lombok.NonNull;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import static com.productest.repositories.specifications.ProductSpecifications.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -63,9 +69,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<List<Product>> findFilteredProducts() {
-        //TODO fazer funcao de desicao para nao sobrecarregar o metodo
-        return null;
+    public ResponseEntity<List<Product>> findFilteredProducts(RequestFilterDTO request) {
+        if(!isRequestFilterFilled(request))
+            return findAllProducts();
+
+        return new ResponseEntity<>(repository.findAll(specificationBuilder(request)), HttpStatus.OK);
     }
 
     @Override
@@ -78,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
         return responseNotFound();
     }
 
-    public boolean isRequestProductDtoValid(RequestProductDTO request) {
+    public boolean isRequestProductDtoValid(@NonNull RequestProductDTO request) {
         return Stream.of(
                         request.getName(),
                         request.getDescription(),
@@ -95,4 +103,31 @@ public class ProductServiceImpl implements ProductService {
         String INVALID_PARAM = "Os valores informados estão incompletos e/ou são inválidos";
         return new ResponseEntity<>(INVALID_PARAM, HttpStatus.BAD_REQUEST);
     }
+
+    public Specification<Product> specificationBuilder(RequestFilterDTO request) {
+        List<Specification<Product>> specificationList = new ArrayList<>();
+
+        if ((request.getQ() != null) && (!request.getQ().trim().isEmpty()))
+            specificationList.add(productNameIs(request.getQ()).or(productDescriptionIs(request.getQ())));
+        if (request.getMinPrice() != null && request.getMaxPrice() != null) {
+            specificationList.add(productPriceIsBetween(request.getMinPrice(), request.getMaxPrice()));
+        }
+        if (request.getMinPrice() != null && request.getMaxPrice() == null)
+            specificationList.add(productPriceIsGreaterThan(request.getMinPrice()));
+        if (request.getMaxPrice() != null && request.getMinPrice() == null)
+            specificationList.add(productPriceIsLesserThan(request.getMaxPrice()));
+
+        Specification<Product> specification = specificationList.get(0);
+        for (Specification<Product> productSpecification : specificationList) {
+            if (!productSpecification.equals(specificationList.get(0)))
+                specification = specification.and(productSpecification);
+        }
+        return specification;
+    }
+
+    public boolean isRequestFilterFilled(@NonNull RequestFilterDTO request) {
+        return !Stream.of(request.getMinPrice(), request.getMaxPrice()).allMatch(Objects::isNull)
+                || (request.getQ() != null && !request.getQ().trim().isEmpty());
+    }
+
 }

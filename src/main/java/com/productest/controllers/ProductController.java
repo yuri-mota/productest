@@ -1,5 +1,6 @@
 package com.productest.controllers;
 
+import com.productest.entities.DTO.RequestFilterDTO;
 import com.productest.entities.DTO.RequestProductDTO;
 import com.productest.entities.Product;
 import com.productest.services.ProductService;
@@ -39,8 +40,8 @@ public class ProductController {
     }
 
     @GetMapping(path = "search")
-    public void findMatchingProducts(@RequestBody Object object) {
-        //TODO
+    public ResponseEntity<List<Product>> findMatchingProducts(@RequestBody RequestFilterDTO request) {
+        return service.findFilteredProducts(request);
     }
 
     @DeleteMapping(path = "{id}")
