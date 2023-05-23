@@ -58,8 +58,7 @@ public class ProductServiceImplTests {
     }
 
     private RequestProductDTO invalidRequestProductDto() {
-        var dto = new RequestProductDTO();
-        return dto;
+        return new RequestProductDTO();
     }
 
     private RequestProductDTO invalidPriceRequestProductDto() {
